@@ -1,0 +1,17 @@
+{
+  "name": "electronjs-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  },
+  "devDependencies": {
+    "electron": "^4.1.0"
+  }
+}
