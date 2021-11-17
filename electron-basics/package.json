@@ -1,12 +1,12 @@
 {
-  "name": "electronjs-tutorial",
+  "name": "electron-basics",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "author": "",
+  "author": "Sahil Rzayev",
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^5.1.3"
