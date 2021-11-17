@@ -123,7 +123,7 @@ function createWindow() {
   )
 
   //eğer açılan pencere kapanırsa o durumda  yapacağımız işlem addWindow'u null yapmak olsun ki
-  //bellekte herhangi bir yer kaplamasın
+  //bellekte fazla bir yer kaplamasın
   addWindow.on("close",()=>{
     addWindow = null;
   })

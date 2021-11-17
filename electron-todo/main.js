@@ -4,7 +4,8 @@ const path=require("path");
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
 
-let mainWindow;
+let mainWindow, addWindow;
+let todoList = [];
 
 app.on("ready",()=>{
 
@@ -28,12 +29,51 @@ app.on("ready",()=>{
     const mainMenu=Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 
-    ipcMain.on("key",()=>{
-        createWindow();
-    })
-
     mainWindow.on("close", ()=>{
         app.quit();
+    })
+
+
+    //newTodo penceresi eventleri...
+    ipcMain.on("newTodo:close",()=>{
+        //console.log("selam")
+        addWindow.close();
+        addWindow = null;
+    })
+
+    ipcMain.on("todo:close",()=>{
+        app.quit();
+        addWindow=null;
+
+    })
+
+    ipcMain.on("newTodo:save",(err,data)=>{
+        //console.log(data)
+        if (data){
+            let todo={
+                id:todoList.length+1,
+                text:data.todoValue
+            }
+            todoList.push(todo);
+            //değeri listeye ekliyoruz
+            // todoList.push({
+            //     id:todoList.length+1,
+            //     text:data
+            // })
+            console.log(todoList);
+
+            //backend'den frontend'e bilgi gönderme
+            //aslında dolaylı yoldan frontend'den backend sayesinde diğer frontend'e bilgiyi gönderiyoruz
+            //mainWindow.webContents.send("todo:addItem", todoList);
+            mainWindow.webContents.send("todo:addItem", todo);
+
+            if (data.ref=="new"){//data içindeki referans new dan geliyorsa
+                //data ekledikden sonra ekleme sayfasından çıkış yapıyoruz
+                addWindow.close();
+                addWindow=null;
+            }
+
+        }
     })
 });
 
@@ -62,7 +102,7 @@ const mainMenuTemplate = [
 
 if (process.platform == "win32") {
     mainMenuTemplate.unshift({
-        label: app.getName(),
+        label: "ElectronJs-Todo",  //app.getName(),
         role: "TODO",
     });
 }
@@ -106,4 +146,10 @@ function createWindow() {
     addWindow.on("close",()=>{
         addWindow = null;
     })
+}
+
+
+function getTodoList() {
+    console.log(todoList)
+    //return todoList;
 }

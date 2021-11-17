@@ -16,3 +16,7 @@ body{
 .main-container{
     z-index: 0;
 }
+
+.todo-item{
+    background-color: #582E48!important;
+}
