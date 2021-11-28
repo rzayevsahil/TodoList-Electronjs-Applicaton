@@ -5,6 +5,17 @@ checkTodoCount();
 
 const todoValue=document.querySelector("#todoValue");
 
+//db'den gelen datalar
+//initApp isimli bana benim main.js den bir event gelirse bu fonksiyonu çalıştır
+ipcRenderer.on("initApp", (e, todos)=>{
+    console.log(e+todos);
+
+    todos.forEach(todo=>{
+        console.log(todo);
+        drawRow(todo);
+    })
+})
+
 //yazınca enter yapmamız için bir kod
 todoValue.addEventListener("keypress",(e)=>{
     console.log(e)// keyCode her zaman 13 veriyor
@@ -35,6 +46,22 @@ document.querySelector("#closeBtn").addEventListener("click",()=>{
 })
 
 ipcRenderer.on("todo:addItem",(err, todo)=>{
+    drawRow(todo);
+})
+
+function checkTodoCount() {
+    const container=document.querySelector(".todo-container")
+    const alertContainer=document.querySelector(".alert-container")
+    document.querySelector(".total-count-container").innerText=container.children.length;
+    if (container.children.length!==0){
+        alertContainer.style.display="none"; //kayıt varsa uyarı çıkmaz
+    }else{
+        alertContainer.style.display="block";
+    }
+}
+
+
+function drawRow(todo){
     console.log(todo);
 
     //container..
@@ -56,7 +83,8 @@ ipcRenderer.on("todo:addItem",(err, todo)=>{
     const p=document.createElement("div")
     p.className="m-0 w-100"; //margin-0 width-100
     // p.innerText="Bu bir yapılacaklar listesidir..."
-    p.innerText=todo.text
+    //p.innerText=todo.text
+    p.innerText=todo.name// normal simüle ederek yazıyorsak text yazarız ama burası db den name olarak geliyor
 
 
     //sil btn
@@ -64,12 +92,19 @@ ipcRenderer.on("todo:addItem",(err, todo)=>{
     deleteBtn.className="btn btn-sm btn-outline-danger flex-shrink-1"
     deleteBtn.innerText="X" // innerText - içeriği demek
 
+    //listede üzerine silmek için tıkladığımız verinin id'si lazım bize
+    //buraya data-id isimli atribute ekliyoruz
+    deleteBtn.setAttribute("data-id", todo.id);
+
 
     //deleteBtn tıklandığında
     deleteBtn.addEventListener("click",(e)=>{
         if(confirm("Bu kaydı silmek istediğinizden emin misiniz?")){
             //tıklanan elementin kendisinin hemen üstündeki elementin bi üstündeki elemente git diyoruz
             e.target.parentNode.parentNode.remove();
+
+            //db den silmek için
+            ipcRenderer.send("remove:todo", e.target.getAttribute("data-id"))
             checkTodoCount();
         }
     })
@@ -85,17 +120,6 @@ ipcRenderer.on("todo:addItem",(err, todo)=>{
     container.appendChild(row);
 
     checkTodoCount();
-})
-
-function checkTodoCount() {
-    const container=document.querySelector(".todo-container")
-    const alertContainer=document.querySelector(".alert-container")
-    document.querySelector(".total-count-container").innerText=container.children.length;
-    if (container.children.length!==0){
-        alertContainer.style.display="none"; //kayıt varsa uyarı çıkmaz
-    }else{
-        alertContainer.style.display="block";
-    }
 }
 
 
